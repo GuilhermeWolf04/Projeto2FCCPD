@@ -1,0 +1,37 @@
+services:
+  processador:
+    build: ./processador
+    container_name: srv-processador
+    ports:
+      - "5000:5000"
+    environment:
+      - ARMAZENADOR_URL=http://armazenador:5001
+      - NOTIFICADOR_URL=http://notificador:5002
+    depends_on:
+      - armazenador
+      - notificador
+    networks:
+      - rede-servicos
+    restart: unless-stopped
+
+  armazenador:
+    build: ./armazenador
+    container_name: srv-armazenador
+    ports:
+      - "5001:5001"
+    networks:
+      - rede-servicos
+    restart: unless-stopped
+
+  notificador:
+    build: ./notificador
+    container_name: srv-notificador
+    ports:
+      - "5002:5002"
+    networks:
+      - rede-servicos
+    restart: unless-stopped
+
+networks:
+  rede-servicos:
+    driver: bridge
