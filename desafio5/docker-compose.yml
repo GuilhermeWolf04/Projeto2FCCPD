@@ -1,0 +1,33 @@
+services:
+  gateway:
+    build: ./gateway
+    container_name: api-gateway
+    ports:
+      - "8000:8000"
+    environment:
+      - USUARIOS_SERVICE=http://servico-usuarios:5001
+      - PEDIDOS_SERVICE=http://servico-pedidos:5002
+    depends_on:
+      - servico-usuarios
+      - servico-pedidos
+    networks:
+      - rede-gateway
+    restart: unless-stopped
+
+  servico-usuarios:
+    build: ./servico-usuarios
+    container_name: servico-usuarios
+    networks:
+      - rede-gateway
+    restart: unless-stopped
+
+  servico-pedidos:
+    build: ./servico-pedidos
+    container_name: servico-pedidos
+    networks:
+      - rede-gateway
+    restart: unless-stopped
+
+networks:
+  rede-gateway:
+    driver: bridge
